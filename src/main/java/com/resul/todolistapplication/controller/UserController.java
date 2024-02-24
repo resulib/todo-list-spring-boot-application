@@ -57,13 +57,13 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/todos/{todoId}")
-    public ResponseEntity<Void> update(@PathVariable Long userId, @PathVariable Long todoId, @RequestBody UpdateTodoDTO updateTodoDTO) {
+    public ResponseEntity<Void> updateTodo(@PathVariable Long userId, @PathVariable Long todoId, @RequestBody UpdateTodoDTO updateTodoDTO) {
         userService.updateTodo(userId, todoId, updateTodoDTO);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("/{userId}/todos/{todoId}")
-    public ResponseEntity<Void> delete(@PathVariable Long userId, @PathVariable Long todoId) {
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long userId, @PathVariable Long todoId) {
         userService.deleteTodo(userId, todoId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
