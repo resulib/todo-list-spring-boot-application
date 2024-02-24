@@ -1,12 +1,8 @@
 package com.resul.todolistapplication.service;
 
 import com.resul.todolistapplication.dto.*;
-import com.resul.todolistapplication.entity.TodoEntity;
-import com.resul.todolistapplication.manager.TodoManager;
 import com.resul.todolistapplication.manager.UserManager;
-import com.resul.todolistapplication.mapper.TodoMapper;
 import com.resul.todolistapplication.mapper.UserMapper;
-import com.resul.todolistapplication.repository.TodoRepository;
 import com.resul.todolistapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,9 +16,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final UserManager userManager;
-    private final TodoRepository todoRepository;
-    private final TodoMapper todoMapper;
-    private final TodoManager todoManager;
+    private final TodoService todoService;
 
     public List<UserDTO> findAll() {
         var userEntities = userRepository.findAllByIsDeleted(false);
@@ -49,30 +43,19 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-    public List<TodoDTO> userTodos(Long id) {
-        var user = userManager.getUserEntity(id);
-        var todoEntities = todoRepository.findAllByIdAndIsDeleted(user.getId(), false);
-        return todoMapper.toTodoDTOList(todoEntities);
+    public List<TodoDTO> userTodos(Long userId) {
+        return todoService.findAll(userId);
     }
 
-    public void createTodo(Long id, CreateTodoDTO createTodoDTO) {
-        var user = userManager.getUserEntity(id);
-        TodoEntity todo = new TodoEntity();
-        todo.setContent(createTodoDTO.getContent());
-        todo.setTitle(createTodoDTO.getTitle());
-        todo.setUserEntity(user);
-        todoRepository.save(todo);
+    public void createTodo(Long userId, CreateTodoDTO createTodoDTO) {
+        todoService.create(userId, createTodoDTO);
     }
 
     public void updateTodo(Long userId, Long todoId, UpdateTodoDTO updateTodoDTO) {
-        var todoEntity = todoManager.getUserTodo(userId, todoId);
-        todoMapper.toTodoEntity(updateTodoDTO, todoEntity);
-        todoRepository.save(todoEntity);
+        todoService.update(userId, todoId, updateTodoDTO);
     }
 
     public void deleteTodo(Long userId, Long todoId) {
-        var todoEntity = todoManager.getUserTodo(userId, todoId);
-        todoEntity.setDeleted(true);
-        todoRepository.save(todoEntity);
+        todoService.delete(userId, todoId);
     }
 }

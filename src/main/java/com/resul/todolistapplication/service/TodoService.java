@@ -3,9 +3,12 @@ package com.resul.todolistapplication.service;
 import com.resul.todolistapplication.dto.CreateTodoDTO;
 import com.resul.todolistapplication.dto.TodoDTO;
 import com.resul.todolistapplication.dto.UpdateTodoDTO;
-import com.resul.todolistapplication.manager.TodoManager;
+import com.resul.todolistapplication.entity.TodoEntity;
+import com.resul.todolistapplication.exception.TodoNotFoundException;
+import com.resul.todolistapplication.manager.UserManager;
 import com.resul.todolistapplication.mapper.TodoMapper;
 import com.resul.todolistapplication.repository.TodoRepository;
+import com.resul.todolistapplication.validator.TodoValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,32 +20,43 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final TodoMapper todoMapper;
-    private final TodoManager todoManager;
+    private final UserManager userManager;
+    private final TodoValidator todoValidator;
 
-    public List<TodoDTO> findAll() {
-        var todoEntities = todoRepository.findAllByIsDeleted(false);
+    public List<TodoDTO> findAll(Long userId) {
+        var todoEntities = todoRepository.findAllByIdAndIsDeleted(userId, false);
         return todoMapper.toTodoDTOList(todoEntities);
     }
 
-    public TodoDTO findById(Long id) {
-        var todoEntity = todoManager.getTodoEntity(id);
-        return todoMapper.toTodoDTO(todoEntity);
-    }
-
-    public void create(CreateTodoDTO createTodoDTO) {
+    public void create(Long userId, CreateTodoDTO createTodoDTO) {
         var todoEntity = todoMapper.toTodoEntity(createTodoDTO);
+        var user = userManager.getUserEntity(userId);
+        todoEntity.setUserEntity(user);
         todoRepository.save(todoEntity);
     }
 
-    public void update(Long id, UpdateTodoDTO updateTodoDTO) {
-        var todoEntity = todoManager.getTodoEntity(id);
+    public void update(Long userId, Long todoId, UpdateTodoDTO updateTodoDTO) {
+        var todoEntity = getUserTodo(userId, todoId);
         todoMapper.toTodoEntity(updateTodoDTO, todoEntity);
         todoRepository.save(todoEntity);
     }
 
-    public void delete(Long id) {
-        var todoEntity = todoManager.getTodoEntity(id);
-        todoEntity.setDeleted(true);
-        todoRepository.save(todoEntity);
+    public void delete(Long userId, Long todoId) {
+        var todo = getUserTodo(userId, todoId);
+        todo.setDeleted(true);
+        todoRepository.save(todo);
+    }
+
+    private TodoEntity getTodoEntity(Long id) {
+        return todoRepository
+                .findByIdAndIsDeleted(id, false)
+                .orElseThrow(() -> new TodoNotFoundException("Todo not found with Id: " + id));
+    }
+
+    private TodoEntity getUserTodo(Long userId, Long todoId) {
+        var user = userManager.getUserEntity(userId);
+        var todo = getTodoEntity(todoId);
+        todoValidator.validate(user, todo);
+        return todo;
     }
 }

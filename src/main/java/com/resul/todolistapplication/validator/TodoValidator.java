@@ -18,7 +18,7 @@ public class TodoValidator {
         var response = userEntity.getTodoEntities().stream()
                 .anyMatch(todoEntity1 -> Objects.equals(todoEntity1.getId(), todoEntity.getId()));
         if (!response) {
-            throw new TodoValidationException("Todo not belongs to user: " + todoEntity.getId());
+            throw new TodoValidationException("Todo not belongs to a user. Todo Id: " + todoEntity.getId());
         }
     }
 }
