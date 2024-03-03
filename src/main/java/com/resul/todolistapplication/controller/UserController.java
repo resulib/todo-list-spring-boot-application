@@ -2,15 +2,12 @@ package com.resul.todolistapplication.controller;
 
 import com.resul.todolistapplication.dto.*;
 import com.resul.todolistapplication.service.UserService;
-import com.resul.todolistapplication.shared.PageRequest;
 import com.resul.todolistapplication.shared.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -20,8 +17,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> findAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
+    public ResponseEntity<PageResponse<UserDTO>> findAll(FindUserDTO findUserDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findAll(findUserDTO));
     }
 
     @GetMapping("/{id}")
@@ -47,9 +44,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/{id}/todos")
-    public ResponseEntity<PageResponse<TodoDTO>> userTodos(@PathVariable Long id, PageRequest pageRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.userTodos(id, pageRequest));
+    @GetMapping("/todos")
+    public ResponseEntity<PageResponse<TodoDTO>> userTodos(FindTodoDTO findTodoDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.userTodos(findTodoDTO));
     }
 
     @PostMapping("/{id}/todos")

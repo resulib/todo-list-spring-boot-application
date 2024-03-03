@@ -4,12 +4,9 @@ import com.resul.todolistapplication.dto.*;
 import com.resul.todolistapplication.manager.UserManager;
 import com.resul.todolistapplication.mapper.UserMapper;
 import com.resul.todolistapplication.repository.UserRepository;
-import com.resul.todolistapplication.shared.PageRequest;
 import com.resul.todolistapplication.shared.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +17,10 @@ public class UserService {
     private final UserManager userManager;
     private final TodoService todoService;
 
-    public List<UserDTO> findAll() {
-        var userEntities = userRepository.findAllByIsDeleted(false);
-        return userMapper.toUserDTOList(userEntities);
+    public PageResponse<UserDTO> findAll(FindUserDTO findUserDTO) {
+        var userEntities = userManager.findAll(findUserDTO);
+        var content = userMapper.toUserDTOList(userEntities.getContent());
+        return new PageResponse<>(content, userEntities.getTotalPages(), userEntities.getTotalElements());
     }
 
     public UserDTO findById(Long id) {
@@ -45,8 +43,8 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-    public PageResponse<TodoDTO> userTodos(Long userId, PageRequest pageRequest) {
-        return todoService.findAll(userId, pageRequest.getPage(), pageRequest.getSize());
+    public PageResponse<TodoDTO> userTodos(FindTodoDTO findTodoDTO) {
+        return todoService.findAll(findTodoDTO);
     }
 
     public void createTodo(Long userId, CreateTodoDTO createTodoDTO) {

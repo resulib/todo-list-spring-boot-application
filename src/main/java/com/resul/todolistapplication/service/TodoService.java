@@ -1,6 +1,7 @@
 package com.resul.todolistapplication.service;
 
 import com.resul.todolistapplication.dto.CreateTodoDTO;
+import com.resul.todolistapplication.dto.FindTodoDTO;
 import com.resul.todolistapplication.dto.TodoDTO;
 import com.resul.todolistapplication.dto.UpdateTodoDTO;
 import com.resul.todolistapplication.entity.TodoEntity;
@@ -23,9 +24,10 @@ public class TodoService {
     private final UserManager userManager;
     private final TodoValidator todoValidator;
 
-    public PageResponse<TodoDTO> findAll(Long userId, int page, int size) {
-        var pageable = PageRequest.of(page, size);
-        var todoEntities = todoRepository.findAllByIdAndIsDeleted(userId, false, pageable);
+    public PageResponse<TodoDTO> findAll(FindTodoDTO findTodoDTO) {
+        var pageable = PageRequest.of(findTodoDTO.getPage(), findTodoDTO.getSize());
+        var findTodoVO = todoMapper.toFindTodoVO(findTodoDTO);
+        var todoEntities = todoRepository.findAll(findTodoVO, pageable);
         var content = todoMapper.toTodoDTOList(todoEntities.getContent());
         return new PageResponse<>(content, todoEntities.getTotalPages(), todoEntities.getTotalElements());
     }
