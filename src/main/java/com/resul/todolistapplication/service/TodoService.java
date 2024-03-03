@@ -10,6 +10,7 @@ import com.resul.todolistapplication.manager.UserManager;
 import com.resul.todolistapplication.mapper.TodoMapper;
 import com.resul.todolistapplication.repository.TodoRepository;
 import com.resul.todolistapplication.shared.PageResponse;
+import com.resul.todolistapplication.specification.TodoSpecification;
 import com.resul.todolistapplication.validator.TodoValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +28,8 @@ public class TodoService {
     public PageResponse<TodoDTO> findAll(FindTodoDTO findTodoDTO) {
         var pageable = PageRequest.of(findTodoDTO.getPage(), findTodoDTO.getSize());
         var findTodoVO = todoMapper.toFindTodoVO(findTodoDTO);
-        var todoEntities = todoRepository.findAll(findTodoVO, pageable);
+        var todoSpecification = new TodoSpecification(findTodoVO);
+        var todoEntities = todoRepository.findAll(todoSpecification, pageable);
         var content = todoMapper.toTodoDTOList(todoEntities.getContent());
         return new PageResponse<>(content, todoEntities.getTotalPages(), todoEntities.getTotalElements());
     }
