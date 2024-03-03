@@ -2,6 +2,8 @@ package com.resul.todolistapplication.controller;
 
 import com.resul.todolistapplication.dto.*;
 import com.resul.todolistapplication.service.UserService;
+import com.resul.todolistapplication.shared.PageRequest;
+import com.resul.todolistapplication.shared.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -46,8 +48,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/todos")
-    public ResponseEntity<List<TodoDTO>> userTodos(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.userTodos(id));
+    public ResponseEntity<PageResponse<TodoDTO>> userTodos(@PathVariable Long id, PageRequest pageRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.userTodos(id, pageRequest));
     }
 
     @PostMapping("/{id}/todos")

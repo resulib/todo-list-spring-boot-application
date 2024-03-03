@@ -8,11 +8,11 @@ import com.resul.todolistapplication.exception.TodoNotFoundException;
 import com.resul.todolistapplication.manager.UserManager;
 import com.resul.todolistapplication.mapper.TodoMapper;
 import com.resul.todolistapplication.repository.TodoRepository;
+import com.resul.todolistapplication.shared.PageResponse;
 import com.resul.todolistapplication.validator.TodoValidator;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -23,9 +23,11 @@ public class TodoService {
     private final UserManager userManager;
     private final TodoValidator todoValidator;
 
-    public List<TodoDTO> findAll(Long userId) {
-        var todoEntities = todoRepository.findAllByIdAndIsDeleted(userId, false);
-        return todoMapper.toTodoDTOList(todoEntities);
+    public PageResponse<TodoDTO> findAll(Long userId, int page, int size) {
+        var pageable = PageRequest.of(page, size);
+        var todoEntities = todoRepository.findAllByIdAndIsDeleted(userId, false, pageable);
+        var content = todoMapper.toTodoDTOList(todoEntities.getContent());
+        return new PageResponse<>(content, todoEntities.getTotalPages(), todoEntities.getTotalElements());
     }
 
     public void create(Long userId, CreateTodoDTO createTodoDTO) {

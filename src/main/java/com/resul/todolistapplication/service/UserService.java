@@ -4,6 +4,8 @@ import com.resul.todolistapplication.dto.*;
 import com.resul.todolistapplication.manager.UserManager;
 import com.resul.todolistapplication.mapper.UserMapper;
 import com.resul.todolistapplication.repository.UserRepository;
+import com.resul.todolistapplication.shared.PageRequest;
+import com.resul.todolistapplication.shared.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,8 +45,8 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-    public List<TodoDTO> userTodos(Long userId) {
-        return todoService.findAll(userId);
+    public PageResponse<TodoDTO> userTodos(Long userId, PageRequest pageRequest) {
+        return todoService.findAll(userId, pageRequest.getPage(), pageRequest.getSize());
     }
 
     public void createTodo(Long userId, CreateTodoDTO createTodoDTO) {
