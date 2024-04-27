@@ -34,9 +34,9 @@ public class TodoService {
         return new PageResponse<>(content, todoEntities.getTotalPages(), todoEntities.getTotalElements());
     }
 
-    public void create(Long userId, CreateTodoDTO createTodoDTO) {
+    public void create(CreateTodoDTO createTodoDTO) {
         var todoEntity = todoMapper.toTodoEntity(createTodoDTO);
-        var user = userManager.getUserEntity(userId);
+        var user = userManager.getUserFromToken();
         todoEntity.setUserEntity(user);
         todoRepository.save(todoEntity);
     }
@@ -47,7 +47,7 @@ public class TodoService {
         todoRepository.save(todoEntity);
     }
 
-    public void delete(Long userId, Long todoId) {
+    public void delete(Long todoId) {
         var todo = getUserTodo(userId, todoId);
         todo.setDeleted(true);
         todoRepository.save(todo);

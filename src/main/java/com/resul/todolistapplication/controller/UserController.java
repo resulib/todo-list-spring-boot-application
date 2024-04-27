@@ -53,9 +53,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.userTodos(findTodoDTO));
     }
 
-    @PostMapping("/{id}/todos")
-    public ResponseEntity<Void> createTodo(@PathVariable Long id, @RequestBody CreateTodoDTO createTodoDTO) {
-        userService.createTodo(id, createTodoDTO);
+    @PostMapping("/todos")
+    public ResponseEntity<Void> createTodo(@RequestBody CreateTodoDTO createTodoDTO) {
+        userService.createTodo(createTodoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -65,9 +65,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("/{userId}/todos/{todoId}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable Long userId, @PathVariable Long todoId) {
-        userService.deleteTodo(userId, todoId);
+    @DeleteMapping("/todos/{todoId}")
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long todoId) {
+        userService.deleteTodo(todoId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

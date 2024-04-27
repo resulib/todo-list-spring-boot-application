@@ -47,15 +47,15 @@ public class UserService {
         return todoService.findAll(findTodoDTO);
     }
 
-    public void createTodo(Long userId, CreateTodoDTO createTodoDTO) {
-        todoService.create(userId, createTodoDTO);
+    public void createTodo(CreateTodoDTO createTodoDTO) {
+        todoService.create(createTodoDTO);
     }
 
     public void updateTodo(Long userId, Long todoId, UpdateTodoDTO updateTodoDTO) {
         todoService.update(userId, todoId, updateTodoDTO);
     }
 
-    public void deleteTodo(Long userId, Long todoId) {
-        todoService.delete(userId, todoId);
+    public void deleteTodo(Long todoId) {
+        todoService.delete(todoId);
     }
 }
