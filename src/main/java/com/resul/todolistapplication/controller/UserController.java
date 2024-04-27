@@ -59,9 +59,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("/{userId}/todos/{todoId}")
-    public ResponseEntity<Void> updateTodo(@PathVariable Long userId, @PathVariable Long todoId, @RequestBody UpdateTodoDTO updateTodoDTO) {
-        userService.updateTodo(userId, todoId, updateTodoDTO);
+    @PutMapping("/todos/{todoId}")
+    public ResponseEntity<Void> updateTodo(@PathVariable Long todoId, @RequestBody UpdateTodoDTO updateTodoDTO) {
+        userService.updateTodo(todoId, updateTodoDTO);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

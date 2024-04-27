@@ -51,8 +51,8 @@ public class UserService {
         todoService.create(createTodoDTO);
     }
 
-    public void updateTodo(Long userId, Long todoId, UpdateTodoDTO updateTodoDTO) {
-        todoService.update(userId, todoId, updateTodoDTO);
+    public void updateTodo(Long todoId, UpdateTodoDTO updateTodoDTO) {
+        todoService.update(todoId, updateTodoDTO);
     }
 
     public void deleteTodo(Long todoId) {

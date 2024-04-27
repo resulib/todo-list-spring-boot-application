@@ -41,14 +41,14 @@ public class TodoService {
         todoRepository.save(todoEntity);
     }
 
-    public void update(Long userId, Long todoId, UpdateTodoDTO updateTodoDTO) {
-        var todoEntity = getUserTodo(userId, todoId);
+    public void update(Long todoId, UpdateTodoDTO updateTodoDTO) {
+        var todoEntity = getUserTodo(todoId);
         todoMapper.toTodoEntity(updateTodoDTO, todoEntity);
         todoRepository.save(todoEntity);
     }
 
     public void delete(Long todoId) {
-        var todo = getUserTodo(userId, todoId);
+        var todo = getUserTodo(todoId);
         todo.setDeleted(true);
         todoRepository.save(todo);
     }
@@ -59,8 +59,8 @@ public class TodoService {
                 .orElseThrow(() -> new TodoNotFoundException("Todo not found with Id: " + id));
     }
 
-    private TodoEntity getUserTodo(Long userId, Long todoId) {
-        var user = userManager.getUserEntity(userId);
+    private TodoEntity getUserTodo(Long todoId) {
+        var user = userManager.getUserFromToken();
         var todo = getTodoEntity(todoId);
         todoValidator.validate(user, todo);
         return todo;
