@@ -1,16 +1,10 @@
+FROM gradle:jdk17 as builder
+COPY . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle build --no-daemon
 
-FROM ubuntu:latest AS build
+FROM openjdk:17.0.1-jdk-slim
 
-RUN apt-get update
-RUN apt-get install openjdk-17-jdk -y
-COPY . .
-
-RUN ./gradlew bootJar --no-daemon build
-
-FROM openjdk:17-jdk-slim
-
+COPY --from=builder /home/gradle/src/build/libs/*SNAPSHOT.jar /app/app.jar
+CMD ["java", "-jar", "/app/app.jar"]
 EXPOSE 8080
-
-COPY --from=build /build/libs/todo-list-application-1-SNAPSHOT.jar.jar app.jar
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
